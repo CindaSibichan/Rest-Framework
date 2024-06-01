@@ -1,5 +1,5 @@
 from django.urls import path,include
-from restapp.views import ClassPerson,index,person_view,PersonViewSet
+from restapp.views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -11,4 +11,6 @@ urlpatterns = [
     path('index/',index , name="index" ),
     path('person_view/',person_view,name="person_view"),
     path('ClassPerson/', ClassPerson.as_view() , name="ClassPerson"),
+    path('GenericPerson/',GenericPerson.as_view() , name="GenericPerson"),
+    path('GenericPerson/<id>/',GenericPersonUpdate.as_view(), name="GenericPersonUpdate"),
 ]

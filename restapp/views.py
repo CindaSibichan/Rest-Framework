@@ -1,9 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
+from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Persons
 from .serializer import PersonSerializer
+
+
+class GenericPerson(generics.ListAPIView , generics.CreateAPIView):
+    queryset = Persons.objects.all()
+    serializer_class = PersonSerializer
+
+class GenericPersonUpdate(generics.UpdateAPIView , generics.DestroyAPIView):
+    queryset = Persons.objects.all()
+    serializer_class = PersonSerializer
+    lookup_field = 'id'
+
 
 
 class ClassPerson(APIView):
