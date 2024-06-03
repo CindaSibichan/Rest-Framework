@@ -12,7 +12,6 @@ from .serializers import UserRegistrationSerializer,OTPVerificationSerializer
 from .utils import *
 
 
-
 class UserRegistrationView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -26,24 +25,24 @@ class UserRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             
-# class OTPVerificationView(APIView):
-#     def post(self, request):
-#         serializer = OTPVerificationSerializer(data=request.data)
-#         if serializer.is_valid():
-#             email = serializer.validated_data['email']
-#             otp = serializer.validated_data['otp']
-#             try:
-#                 user = PersonUser.objects.get(email=email, otp=otp)
-#                 user.otp = None
-#                 user.save()
-#                 refresh = RefreshToken.for_user(user)
-#                 return Response({
-#                     'refresh': str(refresh),
-#                     'access': str(refresh.access_token),
-#                 })
-#             except PersonUser.DoesNotExist:
-#                 return Response({"error": "Invalid OTP or email."}, status=status.HTTP_400_BAD_REQUEST)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class OTPVerificationView(APIView):
+    def post(self, request):
+        serializer = OTPVerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            otp = serializer.validated_data['otp']
+            try:
+                user = PersonUser.objects.get(email=email, otp=otp)
+                user.otp = None
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                })
+            except PersonUser.DoesNotExist:
+                return Response({"error": "Invalid OTP or email."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
