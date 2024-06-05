@@ -38,7 +38,10 @@ ALLOWED_HOSTS = []
 
 # AUTH_USER_MODEL = 'myapp.PersonUser'
 
-
+AUTHENTICATION_BACKENDS = [
+    'myapp.backends.EmailBackend',  # Add this line
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 
 
