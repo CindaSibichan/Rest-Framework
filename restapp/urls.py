@@ -13,4 +13,6 @@ urlpatterns = [
     path('ClassPerson/', ClassPerson.as_view() , name="ClassPerson"),
     path('GenericPerson/',GenericPerson.as_view() , name="GenericPerson"),
     path('GenericPerson/<id>/',GenericPersonUpdate.as_view(), name="GenericPersonUpdate"),
-]
+    path('persons/', PersonsListView.as_view(), name='persons-list'),
+    path('persons/<id>/',PersonUpdateView.as_view() , name="PersonUpdateView")
+    ]

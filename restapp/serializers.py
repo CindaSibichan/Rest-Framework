@@ -7,9 +7,9 @@ class PersonSerializer(serializers.ModelSerializer):
         model = Persons
         fields = '__all__'
 
-    def validate(self,data):
-        spc_char = "|@#$%!*()-+?_=,<>/"
-        if any (c in spc_char for c in data['name']):
-            raise serializers.ValidationError('Name should not contain special characters')  
+    # def validate(self,data):
+    #     spc_char = "|@#$%!*()-+?_=,<>/"
+    #     if any (c in spc_char for c in data['name']):
+    #         raise serializers.ValidationError('Name should not contain special characters')  
 
-        return data  
+    #     return data  

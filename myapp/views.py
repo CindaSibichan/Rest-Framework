@@ -11,7 +11,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from restapp.models import Persons
+from rest_framework.exceptions import AuthenticationFailed
 from .models import PersonUser
+from restapp.serializers import *
+from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from .utils import *
 from django.urls import reverse
@@ -42,23 +46,47 @@ class OTPVerificationView(APIView):
             otp = str(serializer.validated_data['otp'])
             try:
                 user = PersonUser.objects.get(email=email, otp=otp,is_active=False)
-                user.otp = str(otp)  # Clear the OTP for security reasons
-                user.is_active = True  # Mark the user as verified
+                user.otp = str(otp)  
+                user.is_active = True  
                 user.save()
                 
                 return Response({"message": "User registered successfully."}, status=status.HTTP_200_OK)
             except PersonUser.DoesNotExist:
                 return Response({"error": "Invalid OTP or email."}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
 
-    def post(self , request):
+    def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.data , status=status.HTTP_200_OK)    
+        
+        email = serializer.validated_data.get('email')
+        password = serializer.validated_data.get('password')
+        user = authenticate(username=email, password=password)
+        
+        if not user:
+            raise serializers.ValidationError('Invalid credentials')
+
+        if not user.is_active:
+            raise serializers.ValidationError('User account is not active')
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            # 'user': UserLoginSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+
+# class UserLoginView(generics.GenericAPIView):
+#     serializer_class = UserLoginSerializer
+
+#     def post(self , request):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         return Response(serializer.data , status=status.HTTP_200_OK)    
 
 # class UserLoginView(APIView):
    
